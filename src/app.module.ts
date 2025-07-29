@@ -3,6 +3,7 @@ import { GatewayModule } from './websockets/websocket.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessagesModule } from './messages/messages.module';
+import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [
@@ -24,6 +25,6 @@ import { MessagesModule } from './messages/messages.module';
     MessagesModule
   ],
   controllers: [],
-  providers: [],
+  providers: [ChatGateway],
 })
 export class AppModule {}
