@@ -1,10 +1,6 @@
 import { Module } from '@nestjs/common';
-import { GatewayModule } from './websockets/websocket.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MessagesModule } from './messages/messages.module';
-import { ChatGateway } from './chat/chat.gateway';
-import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -20,10 +16,6 @@ import { ChatModule } from './chat/chat.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    
-    //GatewayModule,
-    ChatModule,
-    MessagesModule
   ],
   controllers: [],
   providers: [],
