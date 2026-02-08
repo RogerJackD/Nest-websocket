@@ -1,6 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PollsWsModule } from './polls-ws/polls-ws.module';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { WsExceptionFilter } from './common/filters/ws-exceptions.filter';
 
 @Module({
   imports: [
@@ -16,8 +19,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    PollsWsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({ whitelist: true, transform: true }),
+    },
+    {
+      provide: APP_FILTER,
+      useClass: WsExceptionFilter,
+    }
+  ],
 })
 export class AppModule {}
