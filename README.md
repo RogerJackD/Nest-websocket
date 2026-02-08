@@ -22,6 +22,7 @@
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
+socket-oriented NEST JS backend with Socket io, expertimental laboratory
 default port
 ````
 localhost: 3001
