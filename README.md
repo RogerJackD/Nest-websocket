@@ -26,3 +26,8 @@ default port
 ````
 localhost: 3001
 ````
+
+default port ws
+````
+ws://localhost: 3001
+````
