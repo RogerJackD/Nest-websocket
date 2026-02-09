@@ -4,8 +4,10 @@ import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { Server } from 'socket.io';
 import { VotePollDto } from './dto/vote-poll.dto';
+import { UsePipes, ValidationPipe } from '@nestjs/common';
 
 @WebSocketGateway()
+@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 export class PollsWsGateway {
   constructor(
     private readonly pollsWsService: PollsWsService,
