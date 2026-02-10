@@ -2,8 +2,6 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PollsWsModule } from './polls-ws/polls-ws.module';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
-import { WsExceptionFilter } from './common/filters/ws-exceptions.filter';
 
 @Module({
   imports: [
