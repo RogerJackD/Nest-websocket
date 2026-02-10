@@ -23,14 +23,6 @@ import { WsExceptionFilter } from './common/filters/ws-exceptions.filter';
   ],
   controllers: [],
   providers: [
-    {
-      provide: APP_PIPE,
-      useValue: new ValidationPipe({ whitelist: true, transform: true }),
-    },
-    {
-      provide: APP_FILTER,
-      useClass: WsExceptionFilter,
-    }
   ],
 })
 export class AppModule {}
