@@ -4,24 +4,16 @@ import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { Server } from 'socket.io';
 import { VotePollDto } from './dto/vote-poll.dto';
-import { UsePipes, ValidationPipe } from '@nestjs/common';
+import { BaseGateway } from 'src/common/gateways/base.gateway';
 
 @WebSocketGateway()
-@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-export class PollsWsGateway {
+export class PollsWsGateway extends BaseGateway {
   constructor(
     private readonly pollsWsService: PollsWsService,
-  ) { }
+  ) {
+    super()
+  }
 
-
-  @WebSocketServer()
-  server: Server;
-  // @UsePipes(new ValidationPipe({
-  //   whitelist: true,
-  //   exceptionFactory: (errors) => {
-  //     return new WsException(errors);
-  //   },
-  // }))
   @SubscribeMessage('createPoll')
   create(@MessageBody() createPollDto: CreatePollDto) {
     return this.pollsWsService.create(createPollDto);
