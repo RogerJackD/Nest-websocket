@@ -95,5 +95,18 @@ export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, 
     }
   }
 
-  
+  @SubscribeMessage('leavePollRoom')
+  async leaveRomm(@ConnectedSocket() client: Socket, @MessageBody() dto: JoinPollRoomDto){
+    client.leave(`poll-${dto.pollId}`);
+
+    client.emit('leftPollRoom',{
+      message: `bye bye you just left room ${dto.pollId}`
+    })
+    // return {
+    //   event: 'leftPollRoom',
+    //   data: {
+    //     message: `bye bye nigga you just left room ${dto.pollId}`
+    //   }
+    // }
+  }
 }
