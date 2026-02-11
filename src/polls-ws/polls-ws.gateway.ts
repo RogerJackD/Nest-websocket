@@ -8,6 +8,7 @@ import { BaseGateway } from 'src/common/gateways/base.gateway';
 //conect - disconect
 import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { JoinPollRoomDto } from './dto/join-poll-room.dto';
 
 @WebSocketGateway()
 export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -78,6 +79,21 @@ export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, 
   @SubscribeMessage('votePoll')
   async votePoll(@MessageBody() VotePollDto: VotePollDto){
     const updatedPoll = await this.pollsWsService.votePoll(VotePollDto);
-    this.server.emit('PollUpdated', updatedPoll)
+    this.server.to(`poll-${VotePollDto.pollId}`).emit('pollUpdated', updatedPoll);
   }
+
+  //rooms 
+  @SubscribeMessage('joinPollRoom')
+  async joinRoom(@ConnectedSocket() client: Socket , @MessageBody() joinPollRoomDto: JoinPollRoomDto){
+    const pollData = await this.pollsWsService.findOne(joinPollRoomDto.pollId);
+
+    client.join(`poll-${joinPollRoomDto.pollId}`);
+
+    return {
+      event: 'joinedPollRoom',
+      data: pollData,
+    }
+  }
+
+  
 }
