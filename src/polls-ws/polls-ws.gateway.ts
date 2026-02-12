@@ -5,7 +5,7 @@ import { UpdatePollDto } from './dto/update-poll.dto';
 import { VotePollDto } from './dto/vote-poll.dto';
 import { BaseGateway } from 'src/common/gateways/base.gateway';
 
-//conect - disconect
+//connect - disconnect
 import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { JoinPollRoomDto } from './dto/join-poll-room.dto';
@@ -76,37 +76,31 @@ export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, 
     return this.pollsWsService.remove(id);
   }
 
+  //test room 
   @SubscribeMessage('votePoll')
-  async votePoll(@MessageBody() VotePollDto: VotePollDto){
-    const updatedPoll = await this.pollsWsService.votePoll(VotePollDto);
-    this.server.to(`poll-${VotePollDto.pollId}`).emit('pollUpdated', updatedPoll);
+  async votePoll(@MessageBody() votePollDto: VotePollDto){
+    const pollUpdated = await this.pollsWsService.votePoll(votePollDto);
+    this.server.to(`poll-${votePollDto.pollId}`)
+      .emit('pollUpdated', pollUpdated);
+
   }
 
-  //rooms 
   @SubscribeMessage('joinPollRoom')
-  async joinRoom(@ConnectedSocket() client: Socket , @MessageBody() joinPollRoomDto: JoinPollRoomDto){
-    const pollData = await this.pollsWsService.findOne(joinPollRoomDto.pollId);
-
+  async joinPoll(@ConnectedSocket() client: Socket,@MessageBody() joinPollRoomDto: JoinPollRoomDto){
+    const pollFound = await this.pollsWsService.findOne(joinPollRoomDto.pollId);
     client.join(`poll-${joinPollRoomDto.pollId}`);
-
-    return {
-      event: 'joinedPollRoom',
-      data: pollData,
-    }
+    this.server.to(`poll-${joinPollRoomDto.pollId}`).emit('welcomePollRoom',{
+      message: `a user just join : client : ${client.id}`,
+      poll: `${pollFound.question} options : ${pollFound.options}`
+    })
   }
 
   @SubscribeMessage('leavePollRoom')
-  async leaveRomm(@ConnectedSocket() client: Socket, @MessageBody() dto: JoinPollRoomDto){
-    client.leave(`poll-${dto.pollId}`);
-
+  async leavePoll(@ConnectedSocket() client: Socket,@MessageBody() dto: JoinPollRoomDto){
+    client.leave(`poll-${dto.pollId}`)
     client.emit('leftPollRoom',{
-      message: `bye bye you just left room ${dto.pollId}`
+      message: `bye bye user you left room ${dto.pollId}`,
     })
-    // return {
-    //   event: 'leftPollRoom',
-    //   data: {
-    //     message: `bye bye nigga you just left room ${dto.pollId}`
-    //   }
-    // }
   }
+
 }
