@@ -89,15 +89,14 @@ export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, 
   async joinPoll(@ConnectedSocket() client: Socket,@MessageBody() joinPollRoomDto: JoinPollRoomDto){
     const pollFound = await this.pollsWsService.findOne(joinPollRoomDto.pollId);
     client.join(`poll-${joinPollRoomDto.pollId}`);
-    this.server.to(`poll-${joinPollRoomDto.pollId}`).emit('welcomePollRoom',{
-      message: `a user just join : client : ${client.id}`,
-      poll: `${pollFound.question} options : ${pollFound.options}`
-    })
+    client.broadcast.to(`poll-${joinPollRoomDto.pollId}`).emit('newUserJoinRoom',{ message: `new user in the ROOM ${joinPollRoomDto.pollId} : client: ${client.id}` })
+    client.emit('welcomePollRoom',{message: `WELCOME the question is: ${pollFound.question} options: ${pollFound.options}`})
   }
 
   @SubscribeMessage('leavePollRoom')
   async leavePoll(@ConnectedSocket() client: Socket,@MessageBody() dto: JoinPollRoomDto){
-    client.leave(`poll-${dto.pollId}`)
+    client.leave(`poll-${dto.pollId}`);
+    this.server.to(`poll-${dto.pollId}`).emit('byeUserRoom',{ message: `the user ${client.id} LEFT THE ROOM` })
     client.emit('leftPollRoom',{
       message: `bye bye user you left room ${dto.pollId}`,
     })
