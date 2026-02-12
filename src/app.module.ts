@@ -2,6 +2,7 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PollsWsModule } from './polls-ws/polls-ws.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PollsWsModule } from './polls-ws/polls-ws.module';
       synchronize: true,
     }),
     PollsWsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [
