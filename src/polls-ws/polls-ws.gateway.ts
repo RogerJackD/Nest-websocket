@@ -10,7 +10,7 @@ import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { JoinPollRoomDto } from './dto/join-poll-room.dto';
 
-@WebSocketGateway()
+@WebSocketGateway({ namespace: 'polls' })
 export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private connectedClients: Map<string, string> = new Map();
