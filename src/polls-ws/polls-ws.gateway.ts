@@ -9,8 +9,12 @@ import { BaseGateway } from 'src/common/gateways/base.gateway';
 import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { JoinPollRoomDto } from './dto/join-poll-room.dto';
+import { UseGuards } from '@nestjs/common';
+import { WsAuthGuard } from 'src/common/guards/ws-auth.guard';
+
 
 @WebSocketGateway({ namespace: 'polls' })
+@UseGuards(WsAuthGuard)
 export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private connectedClients: Map<string, string> = new Map();
