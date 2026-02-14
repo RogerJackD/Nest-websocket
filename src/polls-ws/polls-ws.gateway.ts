@@ -11,10 +11,13 @@ import { Socket } from 'socket.io';
 import { JoinPollRoomDto } from './dto/join-poll-room.dto';
 import { UseGuards } from '@nestjs/common';
 import { WsAuthGuard } from 'src/common/guards/ws-auth.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { Role } from 'src/common/enums/role.enum';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
 
 @WebSocketGateway({ namespace: 'polls' })
-@UseGuards(WsAuthGuard)
+@UseGuards(WsAuthGuard, RolesGuard)
 export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private connectedClients: Map<string, string> = new Map();
@@ -24,9 +27,7 @@ export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, 
   ) {
     super()
   }
-
   
-
   handleConnection(client: any, ...args: any[]) {
     this.connectedClients.set(client.id, 'anonymous');
     this.server.emit('listenClientConnected', `new client connect: ${client.id}`)
@@ -55,9 +56,16 @@ export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, 
     };
   }
 
+  @Roles(Role.ADMIN)
   @SubscribeMessage('createPoll')
   create(@MessageBody() createPollDto: CreatePollDto) {
     return this.pollsWsService.create(createPollDto);
+  }
+
+  @Roles(Role.ADMIN)
+  @SubscribeMessage('removePoll')
+  remove(@MessageBody() id: number) {
+    return this.pollsWsService.remove(id);
   }
 
   @SubscribeMessage('findAllPoll')
@@ -75,10 +83,6 @@ export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, 
     return this.pollsWsService.update(updatePollDto)
   }
 
-  @SubscribeMessage('removePoll')
-  remove(@MessageBody() id: number) {
-    return this.pollsWsService.remove(id);
-  }
 
   //test room 
   @SubscribeMessage('votePoll')
