@@ -103,8 +103,8 @@ export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, 
 
     const pollFound = await this.pollsWsService.findOne(joinPollRoomDto.pollId);
     client.join(`poll-${joinPollRoomDto.pollId}`);
-    client.broadcast.to(`poll-${joinPollRoomDto.pollId}`).emit('newUserJoinRoom',{ message: `new user in the ROOM ${joinPollRoomDto.pollId} : client: ${client.id}` })
-    client.emit('welcomePollRoom',{message: `WELCOME the question is: ${pollFound.question} options: ${pollFound.options}`})
+    client.broadcast.to(`poll-${joinPollRoomDto.pollId}`).emit('newUserJoinRoom',{ message: `new user in the ROOM ${joinPollRoomDto.pollId} : client: ${client.id} user: ${client['user'].email}` })
+    client.emit('welcomePollRoom',{message: `WELCOME.}: ${client.id} the question is: ${pollFound.question} options: ${pollFound.options}`})
   }
 
   @SubscribeMessage('leavePollRoom')
