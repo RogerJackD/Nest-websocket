@@ -114,14 +114,14 @@ export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, 
   }
 
   @SubscribeMessage('leavePollRoom')
-  async leavePoll(@ConnectedSocket() client: Socket,@MessageBody() dto: JoinPollRoomDto){
+  async leavePoll(@ConnectedSocket() client: Socket, @WsUser() user: JwtPayload, @MessageBody() dto: JoinPollRoomDto){
 
     const roomName = `poll-${dto.pollId}`;
 
     if(!client.rooms.has(roomName)) throw new WsException(`You are not in room : ${dto.pollId}`);
 
     client.leave(roomName);
-    this.server.to(`poll-${dto.pollId}`).emit('byeUserRoom',{ message: `the user ${client.id} LEFT THE ROOM` })
+    this.server.to(`poll-${dto.pollId}`).emit('byeUserRoom',{ message: `the user with id socket: ${client.id} - user id: ${user.id} LEFT THE ROOM` })
     client.emit('leftPollRoom',{
       message: `bye bye user you left room ${dto.pollId}`,
     })
