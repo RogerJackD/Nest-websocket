@@ -14,6 +14,8 @@ import { WsAuthGuard } from 'src/common/guards/ws-auth.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { WsUser } from 'src/common/decorators/ws-user.decorator';
+import { JwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 
 
 @WebSocketGateway({ namespace: 'polls' })
@@ -99,7 +101,7 @@ export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, 
   }
 
   @SubscribeMessage('joinPollRoom')
-  async joinPoll(@ConnectedSocket() client: Socket,@MessageBody() joinPollRoomDto: JoinPollRoomDto){
+  async joinPoll(@ConnectedSocket() client: Socket, @WsUser() user: JwtPayload, @MessageBody() joinPollRoomDto: JoinPollRoomDto){
 
     const roomName = `poll-${joinPollRoomDto.pollId}`;
 
@@ -107,8 +109,8 @@ export class PollsWsGateway extends BaseGateway implements OnGatewayConnection, 
 
     const pollFound = await this.pollsWsService.findOne(joinPollRoomDto.pollId);
     client.join(`poll-${joinPollRoomDto.pollId}`);
-    client.broadcast.to(`poll-${joinPollRoomDto.pollId}`).emit('newUserJoinRoom',{ message: `new user in the ROOM ${joinPollRoomDto.pollId} : client: ${client.id} user: ${client['user'].email}` })
-    client.emit('welcomePollRoom',{message: `WELCOME.}: ${client.id} the question is: ${pollFound.question} options: ${pollFound.options}`})
+    client.broadcast.to(`poll-${joinPollRoomDto.pollId}`).emit('newUserJoinRoom',{ message: `new user in the ROOM ${joinPollRoomDto.pollId} : client: ${client.id} user: ${user.email} - role: ${user.role}` })
+    client.emit('welcomePollRoom',{message: `WELCOME: ${client.id, '-' , user.email} the question is: ${pollFound.question} options: ${pollFound.options}`})
   }
 
   @SubscribeMessage('leavePollRoom')
