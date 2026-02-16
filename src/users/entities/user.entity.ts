@@ -19,6 +19,9 @@ export class User {
     @Column({type: "enum", enum: Role, default: Role.USER})
     role: Role;
 
+    @Column({type: 'varchar', name: "profile_image", nullable: true})
+    profileImage: string;
+
     @Column({type: 'bool', name: "is_active", default: true})
     isActive: boolean;
 
