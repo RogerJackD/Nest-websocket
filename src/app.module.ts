@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PollsWsModule } from './polls-ws/polls-ws.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { AzureStorageModule } from './azure-storage/azure-storage.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AuthModule } from './auth/auth.module';
     PollsWsModule,
     UsersModule,
     AuthModule,
+    AzureStorageModule,
   ],
   controllers: [],
   providers: [
