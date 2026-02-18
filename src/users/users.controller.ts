@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { UsersService } from './users.service';
   import { UpdateUserDto } from './dto/update-user.dto';
 import { RegisterDto } from 'src/auth/dto/register.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
+import { memoryStorage } from 'multer';
+import { extname } from 'path';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -35,7 +37,21 @@ export class UsersController {
   }
 
   @Post(':id/profile-image')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {
+    storage: memoryStorage(),
+    fileFilter : (req, file, callback) => {
+      console.log('mimetype recibido:', file.mimetype);
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+      const fileExt = extname(file.originalname).toLowerCase();
+
+      if (!allowedExtensions.includes(fileExt)) {
+        return callback(new Error('Only image files are allowed: jpg, jpeg, png, gif, webp'), false);
+      }
+
+      callback( null, true )
+    },
+    limits: { fileSize: 5 * 1024 * 1024 }
+  }))
   async uploadProfileImage(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
