@@ -38,7 +38,8 @@ export class UsersController {
 
   @Post(':id/profile-image')
   @UseInterceptors(FileInterceptor('file', {
-    storage: memoryStorage(),
+
+    storage: memoryStorage(),//file.buffer en memoria
     fileFilter : (req, file, callback) => {
       console.log('mimetype recibido:', file.mimetype);
       const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
