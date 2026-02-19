@@ -20,7 +20,8 @@ export class AzureStorageService {
     }
 
     async uploadFile(file: Express.Multer.File): Promise<string> {
-        const blobName = `${uuid()}-${file.originalname}`;
+        const safeName = file.originalname.replace(/\s+/g, '-');  // espacios → guiones
+        const blobName = `${uuid()}-${safeName}`;
         const blockBlobClient = this.containerClient.getBlockBlobClient(blobName);
 
         await blockBlobClient.uploadData(file.buffer, {
@@ -31,8 +32,21 @@ export class AzureStorageService {
     }
 
     async deleteFile(blobUrl: string): Promise<void> {
-        const blobName = blobUrl.split('/').pop()!;
+        // Decodificar %20 → espacios antes de extraer el nombre
+        const decodedUrl = decodeURIComponent(blobUrl);
+        //decodeURIComponent convierte:
+        // Captura%20de%20pantalla%202026-02-11%20121630.png
+        // →
+        // Captura de pantalla 2026-02-11 121630.png
+        const blobName = decodedUrl.split('/').pop()!;
+
+        console.log('URL a eliminar:', blobUrl);
+        console.log('blobName extraído:', blobName);
+
         const blockBlobClient = this.containerClient.getBlockBlobClient(blobName);
-        await blockBlobClient.deleteIfExists();
+        const result = await blockBlobClient.deleteIfExists();
+
+        console.log('¿Se eliminó?:', result.succeeded);
+
     }
 }
