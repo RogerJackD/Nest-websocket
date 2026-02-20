@@ -5,6 +5,7 @@ import { PollsWsModule } from './polls-ws/polls-ws.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AzureStorageModule } from './azure-storage/azure-storage.module';
+import { AzureKeyVaultModule } from './azure-key-vault/azure-key-vault.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AzureStorageModule } from './azure-storage/azure-storage.module';
     UsersModule,
     AuthModule,
     AzureStorageModule,
+    AzureKeyVaultModule,
   ],
   controllers: [],
   providers: [
