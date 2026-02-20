@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { AzureKeyVaultService } from './azure-key-vault.service';
 
-@Module({})
+@Module({
+  providers: [AzureKeyVaultService]
+})
 export class AzureKeyVaultModule {}
