@@ -6,7 +6,7 @@
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
 ## Description
-socket-oriented NEST JS backend with Socket io, expertimental laboratory
+socket-oriented NEST JS backend with Socket io, docker database postgresql, expertimental laboratory
 default port
 ````
 localhost: 3001
